@@ -73,4 +73,18 @@ SELECT ename,job,sal,sal*12 AS annsal
   FROM emp
   WHERE ename LIKE '__RD'; -- J% -> J로 시작 /  %ER -> ER로 끝남 / %E% -> 중간에 E 들어감 / __RD -> RD로끝나는 4글자
   
+
+-- NULL, ㅎ함수 MVL() 나중에 to be continue
+ SELECT ename,job,sal,comm
+  FROM emp
+  WHERE comm IS NOT NULL;
+  
+  -- 집합 UNION -> 관계가 없는 데이터도 합칠 수 있다(실제론, 가치있는 데이터 중 내가 필요한것을 뽑을때 사용)
+  SELECT empno, ename, job FROM emp
+  WHERE comm IS NOT NULL
+  UNION ALL
+  SELECT deptno, dname,loc FROM dept; -- 결과는 empno, ename, job으로 통일되서 나옴
+  
+  
+  
   
