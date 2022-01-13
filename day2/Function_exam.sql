@@ -94,3 +94,5 @@ SELECT deptno, NVL(job,'гу╟Х') job,
  FROM emp
  GROUP BY ROLLUP(deptno, job);
 
+DELETE FROM test
+ WHERE idx = 100;
