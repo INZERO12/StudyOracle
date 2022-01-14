@@ -16,7 +16,7 @@ SELECT b.names 책제목, b.author 저자명, b.releasedate 출판일, b.price 가격 FROM 
 SELECT d.names 장르
      , b.names 책제목
      , b.author 저자
-     , b.releasedate 출판일
+     , TO_CHAR(b.releasedate,'YYYY-MM-DD') 출판일
      , b.isbn 책코드번호
      , TO_CHAR(b.price) || '원' 가격 
  FROM BOOKSTBL b, divtbl d
