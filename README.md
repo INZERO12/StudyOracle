@@ -21,3 +21,6 @@ Oracle 학습 리포지토리
 - DML(INSERT, UPDATE, DELETE문)
 - SEQUENCE
 - 트랜잭션 (COMMIT, ROLLBACK)
+
+### 9일차 학습
+- R에서 JDBC이용한 오라클 접속
