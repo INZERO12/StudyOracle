@@ -178,18 +178,109 @@ FROM member;
 -- 판매금액은 = 판매단가 * 55로 계산
 SELECT prod_id as 상품코드, 
     prod_name as 상품명, 
-    prod_sale*55 as 판매금액
+    (prod_sale*55) as 판매금액
 FROM prod;
 
+-- 상품 테이블의 상품분류를 중복되지 않게 검색
+SELECT prod_lgu as 상품분류 FROM prod;
+
+-- 상품 테이블의 거래처코드를 중복되지 않게 검색
+SELECT DISTINCT prod_buyer AS 거래처코드 FROM prod;
+
+-- 회원테이블에서 회원ID, 회원명, 생일, 마일리지 검색
+SELECT mem_id, mem_name, mem_bir, mem_mileage
+FROM member
+ORDER BY mem_id;
+
+SELECT mem_id as id, 
+    mem_name as nm, 
+    mem_bir, mem_mileage
+FROM member
+ORDER BY id Asc;
 
 
+-- 상품 중 판매가가 170,000원인 상품 조회
+SELECT prod_name 상품, prod_sale 판매가
+FROM prod
+WHERE prod_sale = 170000;
 
 
+-- 상품 중 판매가가 170,000원이 아닌 
+-- 상품아이디와 상품 조회
+SELECT prod_id 상품아이디, prod_name 상품
+FROM prod
+WHERE prod_sale <> 170000;
+
+-- 상품 중 판매가가 170,000원을 초과하는 
+-- 상품아이디와 상품 조회
+SELECT prod_id 상품아이디, prod_name 상품
+FROM prod
+WHERE prod_sale > 170000;
+
+-- 상품중에 매입가격이 200,00원 이하인
+-- 상품검색 단, 상품코드를 기준으로 내림차순
+-- 조회 컬럼은 상품아이디, 매입가격, 상품명
+SELECT prod_id,
+    prod_cost,
+    prod_name
+from prod
+where prod_cost <= 20000
+order by prod_id desc;
+
+--  회원 중에 76년도 1월 1일 이후에 태어난
+-- 회원아이디, 회원이름, 주민등록번호 앞자리 조회
+-- 단, 회원아이디 기준 오름차순
+SELECT mem_id,
+    mem_name,
+    mem_regno1  
+from member
+where  mem_regno1 >= 760101
+order by mem_id;
+
+-- 상품 중 상품분류가 P201(여성캐쥬얼)이고 판매가가 170,000원인 상품 조회
+SELECT prod_name 상품, prod_lgu 상품분류, prod_sale 판매가
+FROM prod
+WHERE prod_lgu = 'P201'
+AND prod_sale = 170000;
 
 
+-- 상품 중 상품분류가 P201(여성캐쥬얼)이거나 판매가가 170,000원인 상품 조회
+SELECT prod_name 상품, prod_lgu 상품분류, prod_sale 판매가
+FROM prod
+WHERE prod_lgu = 'P201'
+OR prod_sale = 170000;
+
+-- 상품 중 상품분류가 P201(여성캐쥬얼)도 아니고 판매가가 170,000원도 아닌 상품 조회
+SELECT prod_name 상품, prod_lgu 상품분류, prod_sale 판매가
+FROM prod
+WHERE NOT prod_lgu = 'P201'
+OR prod_sale = 170000;
 
 
+-- 상품 중 판매가가 300,000원 이상, 500,000원 이하인 상품을 검색하시오
+-- Alias는 상품코드, 상품명, 판매가
+SELECT prod_id, prod_name, prod_sale
+FROM prod
+WHERE prod_sale >= 300000 
+and prod_sale <= 500000;
 
+-- 상품 중에 판매가격이 15만원, 17만원, 33만원인
+-- 상품정보 조회, 상품코드, 상품명, 판매가격 조회
+-- 정렬은 상품명 순으로
+SELECT prod_id, prod_name, prod_sale
+from prod
+WHERE prod_sale = 150000 or prod_sale = 170000 or prod_sale = 330000
+ORDER BY prod_name;
+
+-- 회원 중에 아이디가 c001, F001, W001인 회원조회
+-- 회원 아이디, 회원이름 조회
+-- 정렬은 주민번호 앞자리를 기준으로 내림차순
+SELECT mem_id, mem_name
+from member
+WHERE mem_id = 'c001' or mem_id = 'f001' or mem_id ='w001'
+ORDER BY mem_regno1 desc;
+
+commit;
 
 
 
