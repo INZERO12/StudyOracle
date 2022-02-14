@@ -1,11 +1,9 @@
 # StudyOracle
 Oracle 학습 리포지토리
-![Oracle](https://media.vlpt.us/images/dainni/post/2214cf8b-57b6-42dd-8aa3-26f4ee4fd54f/Oracle-Logo.png)
 
 ### 1일차
 - SQL 기본 SELECT 문 학습
 - SQL Developer 설치와 사용법 학습
-- SQL 기본 SELECT 문 학습
 
 ### 2일차 학습
 - SELECT 응용
@@ -23,5 +21,7 @@ Oracle 학습 리포지토리
 - SEQUENCE
 - 트랜잭션 (COMMIT, ROLLBACK)
 
-### 9일차 학습
-- R에서 JDBC이용한 오라클 접속
+### 4일차 학습
+- 데이터베이스(DBMS)
+- SQL 기본 SELECT 문 학습
+- DDL(CREATE, ALTER, DROP문)
