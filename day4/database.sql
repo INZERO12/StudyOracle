@@ -280,7 +280,3 @@ from member
 WHERE mem_id = 'c001' or mem_id = 'f001' or mem_id ='w001'
 ORDER BY mem_regno1 desc;
 
-commit;
-
-
-
