@@ -25,3 +25,17 @@ Oracle 학습 리포지토리
 - 데이터베이스(DBMS)
 - SQL 기본 SELECT 문 학습
 - DDL(CREATE, ALTER, DROP문)
+
+### 5일차 학습
+- IN, NOT IN 절
+- ERD 활용 SELECT문
+- BETWEEN AND
+- LIKE문
+- CONCAT
+- LOWER/UPPER/INITCAP
+- SUBSTR, TRANSLATE, REPLACE
+- SYSDATAE
+- EXTRACT
+- TO_CHAR
+- 숫자 FORMAT 함수
+- group by 절 / COUNT
