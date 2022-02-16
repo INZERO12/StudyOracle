@@ -38,4 +38,11 @@ Oracle 학습 리포지토리
 - EXTRACT
 - TO_CHAR
 - 숫자 FORMAT 함수
-- group by 절 / COUNT
+- GROUP BY 절 / COUNT
+
+### 6일차 학습
+- COUNT(col)/ COUNT(*)
+- MAX/MIN
+- AVG/SUM
+- GROUP BY HAVING 절
+- NULL / White Space
