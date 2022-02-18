@@ -289,7 +289,7 @@ order by 상품분류명 desc, 상품아이디
 ;
 
 
-
+-- 2조
 --- 문제풀이
 /*
 [1문제]
@@ -446,7 +446,7 @@ from member
             from cart
             where substr(cart_no,5,2) between '04' and  '06'
             and cart_qty > (select avg(cart_qty) from cart));
-
+-- 5조(우리조)
 ---- join 사용
 
 /*
@@ -593,7 +593,6 @@ where substr(buy_date,4,2)<'06'
 -- 1조문제
 /*
 [문제 만들기]
-대전에 사는 담당자가 담당하는 상품 중
 안전재고수량별 빈도수가 가장 높은 상품을 구매한 회원 중 자영업 아닌 회원의 id와 name
 */
 select mem_id, mem_name
@@ -602,31 +601,79 @@ where mem_id in
 (select cart_member
 from cart
 where cart_prod in
-    (select prod_id, count(prod_id),prod_properstock
-    from prod
-    where 
-    prod_buyer in
-        (select buyer_id
-        from buyer
-        where buyer_add1 like '%대전%')
-        group by  prod_id,prod_properstock)
+    (select prod_id
+        from prod
+        where prod_properstock in
+            ( select  prod_properstock  
+            from( select count(prod_properstock),prod_properstock 
+            , (count(prod_properstock))/prod_properstock as "빈도"
+                from prod
+                group by prod_properstock)
+                where 빈도 = (select  max(빈도) 
+                        from( select count(prod_properstock),prod_properstock 
+                        , (count(prod_properstock))/prod_properstock as "빈도"
+                                from prod
+                                group by prod_properstock
+                            ) ))
+                                                      
+ )
 and mem_job != '자영업'        );
-        
 
-select count(prod_name),prod_properstock from (
-select count(prod_name) as q ,prod_properstock
+
+
+/*
+취급상품코드가 'P1'이고 '인천'에 사는 구매 담당자의 상품을 구매한 
+회원의 결혼기념일이 8월달이 아니면서 
+평균마일리지(소수두째자리까지) 미만이면서 
+구매일에 첫번째로 구매한 회원의 
+회원ID, 회원이름, 회원마일리지를 검색하시오.  
+*/
+select mem_id, mem_name, mem_mileage
+from member
+where mem_id in
+( select cart_member
+from cart
+where substr(cart_no,13,1) = '1' and
+cart_prod in
+(select prod_id
 from prod
-group by prod_properstock);
+where prod_buyer in
+( select buyer_id
+from buyer
+where buyer_lgu like '%P1%'
+and buyer_add1 like '%인천%')))
+and mem_memorial = '결혼기념일'
+and substr(mem_memorialday,4,2) != '08'
+and mem_mileage < (select round(avg(mem_mileage),2) from member) ;
+
+
 
 
 /*
 [문제 만들기]
 주소지가 대전인 거래처 담당자가 담당하는 상품을 
-구매하지 않은 대전 여성 회원 중에 12월에 결혼기념일이 있는
+구매하지 않은 대전 여성 회원 중에 2월에 결혼기념일이 있는
 회원 아이디, 회원 이름 조회 
-이름 오름차순 정렬 
+이름 오름차순 정렬
 */
-
+select mem_id, mem_name
+from member
+where mem_id in
+(select cart_member
+from cart
+where cart_prod in
+(select prod_id
+from prod
+where prod_buyer in
+(select buyer_id
+from buyer
+where buyer.buyer_add1 not like '%대전%'
+)))
+and mem_add1 like '%대전%'
+and mem_memorial = '결혼기념일'
+and substr(mem_memorialday,4,2) = '02'
+order by mem_name
+;
 
 /*
 [문제 만들기]
@@ -636,7 +683,31 @@ group by prod_properstock);
 --서울: 수도권
 --충남, 대전 : 충청도 나머지는 경상도
 */
+select max(mem_memorial) 지역, substr(mem_add1,1,2) 기념일
+from member
+where mem_id in
+(select cart_member
+from cart
+where cart_prod in
+(select prod_id
+from prod
+where prod_sale >= (select avg(prod_sale) from prod) and
+prod_lgu in
+(select lprod_gu
+from lprod
+where lprod_nm = '컴퓨터제품' and
+lprod_gu in
+(select buyer_lgu
+from buyer
+where buyer_add1 like '%서울%' or buyer_add1 like '%인천%'
+and buyer_add1 like '%마%' or buyer_add2 like '%마%'
+))))
+group by substr(mem_add1,1,2)
+;
 
+
+
+--- 4조
 /*
 <태영>
 김성욱씨는 주문했던 제품의 배송이 지연되어 불만이다.
@@ -644,18 +715,42 @@ group by prod_properstock);
 김성욱씨는 해당 제품의 공급 담당자에게 직접 전화하여 항의하고 싶다.
 어떤 번호로 전화해야 하는가?
 */
-select buyer_comtel
+select buyer_comtel as 담당자전화번호
 from buyer
 where buyer_id in
 (select prod_buyer
 from prod
-where ;
+where prod_id in
+( select cart_prod
+from cart
+where cart_member in
+( select mem_id
+from member)))
+;
 
 /*
 <태경>
 서울 외 타지역에 살며 외환은행을 사용하는 거래처 담당자가 담당하는 상품을 구매한 회원들의 이름, 생일을 조회 하며 
 이름이 '이'로 시작하는 회원명을을 '리' 로 치환해서 출력해라 
 */
+select replace(mem_name,'이','리'), mem_bir
+from member
+where mem_id in
+(select cart_member
+from cart
+where cart_prod in
+(select prod_id
+from prod
+where prod_buyer in
+(select buyer_id
+from buyer
+where buyer_add1 not like '%서울%'
+and buyer_bank = '외환은행'
+)))
+;
+
+
+
 
 /*
 <덕현>
@@ -664,6 +759,86 @@ where ;
 정렬은 ID, 이름 순으로 정렬하시오.
 (단, 마진은 소비자가 - 매입가로 계산한다.)
 */
+-- 수정하자
+select prod_id 상품ID, prod_name 이름,  prod_price - prod_cost
 
+
+from prod
+where prod_id in
+( select cart_prod
+from cart
+where mod(substr(cart_no,5,2),2)=0
+)
+and prod_delivery not like '%세탁 주의%'
+
+order by prod_id, prod_name;
+
+select
+case prod_price - prod_cost as "판매마진"
+when max(prod_price - prod_cost) then max(prod_price - prod_cost)-max(prod_price - prod_cost)*0.1
+when min(prod_price - prod_cost) then min(prod_price - prod_cost)*0.1
+else (prod_price - prod_cost)
+end
+from prod;
+
+select
+to_char(decode(max(prod_price - prod_cost),max(prod_price - prod_cost)-max(prod_price - prod_cost)*0.1,
+       min(prod_price - prod_cost),min(prod_price - prod_cost)*0.1,(prod_price - prod_cost) ))
+
+from prod;
+
+-- 3조
+/*
+1. 오철희가 산 물건 중 TV 가 고장나서 교환받으려고 한다
+교환받으려면 거래처 전화번호를 이용해야 한다.
+구매처와 전화번호를 조회하시오.
+*/
+select buyer_name 구매처, buyer_comtel 전화번호
+from buyer
+where buyer_id in
+(select prod_buyer
+from prod
+where prod_name like '%TV%' and
+prod_id in
+(select cart_prod
+from cart
+where cart_member in
+(select mem_id
+from member
+where mem_name = '오철희')))
+;
+/*
+2. 대전에 사는 73년이후에 태어난 주부들중 2005년4월에 구매한 물품을 조회하고, 
+그상품을 거래하는 각거래처의 계좌 은행명과 계좌번호를 뽑으시오.
+(단, 은행명-계좌번호).*/
+select buyer_bank 은행명 , buyer_bankno  계좌번호
+from buyer
+where buyer_id in
+(select prod_buyer
+from prod
+where prod_id in
+(select cart_prod
+from cart
+where substr(cart_no,1,6)='200504' and
+cart_member in
+(select mem_id
+from member
+where mem_add1 like '%대전%'
+and substr(mem_regno1,1,2) >= 73
+and mem_job = '주부'
+)));
+
+/*
+3. 물건을 구매한 회원들 중 5개이상 구매한 회원과 4개이하로 구매한 회원에게 쿠폰을 할인율이 다른 쿠폰을 발행할 예정이다. 
+회원들을 구매횟수에 따라  오름차순으로 정렬하고  회원들의 회원id와 전화번호(HP)를 조회하라.
+*/
+select mem_id 회원id, mem_hp 전화번호
+from member
+where mem_id in
+( select cart_member
+from (select  cart_member, sum(cart_qty)
+from cart
+group by cart_member
+order by sum(cart_qty)));
 
 
