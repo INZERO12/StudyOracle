@@ -46,3 +46,10 @@ Oracle 학습 리포지토리
 - AVG/SUM
 - GROUP BY HAVING 절
 - NULL / White Space
+- 배운 함수활용 문제 창작
+
+### 7일차 학습
+- EXISTS
+- JOIN(일반방식/ANSI 국제표준방식)
+	- Cross Join/Cartesian Product
+	- Inner Join / Equo Join
