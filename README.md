@@ -53,3 +53,8 @@ Oracle 학습 리포지토리
 - JOIN(일반방식/ANSI 국제표준방식)
 	- Cross Join/Cartesian Product
 	- Inner Join / Equo Join
+	
+### 8일차 학습
+- JOIN(일반방식/ANSI 국제표준방식)
+	- OUTER JOIN(LEFT/RIGHT)
+- 서브쿼리
