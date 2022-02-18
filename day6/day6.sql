@@ -252,23 +252,11 @@ from member;
 
 -- 가장 어려운 문제 3문제 만들기
 /*
-1. 서울에 사는 고객이거나 25만원 이상 구매 고객 배송비 무료,
-그 외 배송비 판매가 + 3000,
-배송비에 드는 총합
-*/
-select count(prod_sale) * 3000 배송비총합
-from prod
-where prod_id in
-(select cart_prod
-from cart
-where cart_member in
-( select mem_id
-from member
-where substr(mem_add1,1,2) != '서울')) or 250000 > prod_sale ;
 
 
 /*
-1. 서울에 사는 고객은 배송비무료,
+[test] 
+서울에 사는 고객은 배송비무료,
 지방 고객은 배송비 3000 추가
 별개로,
 25만원 이상 상품구매시 배송비 무료,
@@ -284,10 +272,65 @@ where cart_member in
 from member
 where substr(mem_add1,1,2) != '서울')) and 250000 > prod_sale ;
 
+
+-- 가장 어려운 문제 3문제 만들기
 /*
--- -입고 정보- 6월달 이전(5월달까지)에 입고된 상품중에 배달특기사항이 '세탁 주의'이면서
--- -구매정보- 색상이 null값인 제품들 중에 판매량이 제품 판매량의 평균보다 많이 팔린걸 구매한
--- -회원정보- 김씨 성을 가진 손님의 이름과 보유 마일리지를 구하고 성별을 출력하시오
+[문제1]
+'여성캐주얼'이면서 제품 이름에 '여름'이 들어가는 상품이고, 
+매입수량이 30개이상이면서 6월에 입고한 제품의
+마일리지와 판매가를 합한 값을 조회하시오
+Alias 이름,판매가격, 판매가격+마일리지
+*/
+select prod_name 이름
+, prod_sale 판매가격
+, nvl(prod_mileage,0)+prod_sale as "판매가격+마일리지"
+from prod
+where prod_id in
+(select buy_prod
+from buyprod
+where buy_qty >=30 and
+to_char(buy_date,'mm')='06') and
+prod_lgu in
+(select lprod_gu
+from lprod
+where lprod_nm ='여성캐주얼')and prod_name like '%여름%'
+;
+
+/*
+[문제2]
+거래처 코드가 'P20' 으로 시작하는 거래처가 공급하는 상품에서 
+제품 등록일이 2005년 1월 31일(2월달) 이후에 이루어졌고 매입단가가 20만원이 넘는 상품을
+구매한 고객의 마일리지가 2500이상이면 우수회원 아니면 일반회원으로 출력하라
+컬럼 회원이름과 마일리지, 우수 또는 일반회원을 나타내는 컬럼
+*/
+SELECT mem_id,mem_mileage,CASE 
+          WHEN mem_mileage >= '2500' THEN '우수회원'
+          ELSE '일반회원' END as "회원 등급"
+            FROM member
+                WHERE mem_id IN(
+                     SELECT cart_member FROM cart
+                        WHERE cart_prod IN (
+                            SELECT prod_id FROM prod
+                                WHERE prod_insdate > TO_DATE('050131','yymmdd')
+                                    AND prod_id IN (
+                                        SELECT buy_prod FROM buyprod
+                                            WHERE buy_cost >= 200000
+                                                AND prod_buyer IN(
+                                                    SELECT buyer_id FROM buyer
+                                                        WHERE SUBSTR(buyer_id,1,3) = 'P20'
+                                                )
+                                    )
+                        )
+                );
+
+              
+/*
+[문제3]
+6월달 이전(5월달까지)에 입고된 상품 중에 
+배달특기사항이 '세탁 주의'이면서 색상이 null값인 제품들 중에 
+판매량이 제품 판매량의 평균보다 많이 팔린걸 구매한
+김씨 성을 가진 손님의 이름과 보유 마일리지를 구하고 성별을 출력하시오
+Alias 이름, 보유 마일리지, 성별
 */
 select mem_name, mem_mileage,
 case mod(substr(mem_regno1,1,2),2)
@@ -315,53 +358,3 @@ where substr(buy_date,4,2)<'06'
 )
 )
 ;
-
-/*
-lprod : 여성 캐주얼이면서 
-prod :여름 의류이고, 
-buyprod :매입수량이 30개이상
-prod : 6월 입고한 제품의
-마일리지와 판매가를 더한 값을 구하세요
-Alias 이름,판매가격조회, 판매가격+마일리지
-*/
-select prod_name 이름
-, prod_sale 판매가격
-, nvl(prod_mileage,0)+prod_sale as "판매가격+마일리지"
-from prod
-where prod_id in
-(select buy_prod
-from buyprod
-where buy_qty >=30 and
-to_char(buy_date,'mm')='06') and
-prod_lgu in
-(select lprod_gu
-from lprod
-where lprod_nm ='여성캐주얼')and prod_name like '%여름%'
-;
-
-/*
-lprod : 여성캐주얼이면서 
-prod :여름 의류이고, 
-buyprod :매입수량이 1개이상
-prod : 6월 입고한 제품의
-마일리지와 판매가를 더한 값을 구하세요
-그리고, prod : 총입고수량을 '입고예정'으로 바꾸세요.
-Alias 이름,판매가격조회, 판매가격+마일리지, 총입고수량
-*/
-select prod_name 이름
-, prod_sale 판매가격
-, nvl(prod_mileage,0)+prod_sale as "판매가격+마일리지",
-replace(prod_qtysale,0,'입고예정') 총입고수량
-from prod
-where prod_id in
-(select buy_prod
-from buyprod
-where buy_qty >=1 and
-to_char(buy_date,'mm')='06') and
-prod_lgu in
-(select lprod_gu
-from lprod
-where lprod_nm ='여성캐주얼')and prod_name like '%여름%'
-;
-
-
