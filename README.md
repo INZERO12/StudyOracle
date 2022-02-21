@@ -1,6 +1,8 @@
 # StudyOracle
 Oracle 학습 리포지토리
 
+![Oracle](https://media.vlpt.us/images/dainni/post/2214cf8b-57b6-42dd-8aa3-26f4ee4fd54f/Oracle-Logo.png)
+
 ### 1일차
 - SQL 기본 SELECT 문 학습
 - SQL Developer 설치와 사용법 학습
